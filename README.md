@@ -2,7 +2,7 @@
 
 ## This is basically chat site developed using following stacks:
 
- Reactjs
- Mongo DB
- Spring boot Java
+ # Reactjs
+ # Mongo DB
+ # Spring boot Java
 
