@@ -1,8 +1,7 @@
-## chat-spring-boot ##
+# chat-spring-boot
 
-## This is basically chat site developed using following stacks:
+## This is basically a chat site developed using the following stacks:
 
- # Reactjs
- # Mongo DB
- # Spring boot Java
-
+### Reactjs
+### Mongo DB
+### Spring Boot Java
