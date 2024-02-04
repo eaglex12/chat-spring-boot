@@ -1,0 +1,82 @@
+.Rightsec{
+    flex: 3;
+    box-sizing: border-box;
+    border: 4px solid black;
+    height: 100vh;
+    overflow-y: hidden;
+
+}
+
+/* section 1 */
+
+.selecteduser{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-sizing: border-box;
+    height: 9%;
+    border: 2px solid black;
+    background-color: #101b20;
+    padding:12px;
+
+
+
+}
+
+/* section 2 */
+
+.messagearea{
+
+    height:82%;
+    display: flex;
+    flex-direction: column;
+    background-color: #e5ddd6;
+    overflow-y: auto;
+
+}
+
+.messages{
+
+    display: flex;
+    margin: 5px 15px;
+    justify-content: flex-end;
+}
+
+.messages span{
+    background-color: #daf8cb;
+    color:black;
+    max-width: 50%;
+    padding:8px 14px;
+    font-size: 14px;
+}
+
+/* section 3 */
+
+.messagebox{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-sizing: border-box;
+    height: 9%;
+    border: 2px solid black;
+    background-color: #101b20;
+    padding:0px 12px;
+
+
+
+}
+
+.msgbar{
+    display: flex;
+    padding:0px 12px;
+    border-radius: 8px;
+    background-color: #313437;
+    width: 841px;
+    margin-right: 19px;
+
+
+
+}
