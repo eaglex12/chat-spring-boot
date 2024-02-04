@@ -3,7 +3,7 @@
     flex:1.6;
     box-sizing: border-box;
     border: 4px solid black;
-    overflow-y: hidden;
+    overflow: auto;
 }
 
 /* section 1 */
@@ -43,8 +43,9 @@
 
 .namelistbar{
 
-    overflow: auto;
 
     background-color: #010c10;
-    height: 100vh;
+    height: 100%;
+    overflow-y: auto;
+
 }

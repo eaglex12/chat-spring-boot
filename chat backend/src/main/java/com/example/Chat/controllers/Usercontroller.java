@@ -1,12 +1,11 @@
 package com.example.Chat.controllers;
 
 import com.example.Chat.Repositry.Userrepositry;
+import com.example.Chat.models.ChatMessage;
 import com.example.Chat.models.User;
 import com.example.Chat.Resources.Userrequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +13,12 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.messaging.handler.annotation.MessageMapping;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 
 import java.util.List;
@@ -27,13 +30,30 @@ public class Usercontroller {
 
     private final Userrepositry userrepositry;
     private final ObjectMapper objectMapper; // Autowire or instantiate ObjectMapper
+    private final SimpMessagingTemplate messagingTemplate;
 
 
-    public Usercontroller(Userrepositry userrepositry, ObjectMapper objectMapper) {
+    @Autowired
+    public Usercontroller(Userrepositry userrepositry, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper) {
         this.userrepositry = userrepositry;
+        this.messagingTemplate = messagingTemplate;
         this.objectMapper = objectMapper;
-
     }
+
+    @MessageMapping("/chat/{friendEmail}")
+    public void sendChatMessage(@DestinationVariable String friendEmail, @Payload ChatMessage chatMessage) {
+        String senderEmail = getCurrentUserEmail();
+
+        // Update the friend's messages in the database
+        userrepositry.updateFriendMessages(senderEmail, friendEmail, chatMessage);
+
+        // Send the message to the friend's chat topic
+        String friendTopic = "/topic/chat/" + friendEmail;
+        messagingTemplate.convertAndSend(friendTopic, chatMessage);
+    }
+
+
+    
 
     @GetMapping("/user")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -54,9 +74,8 @@ public class Usercontroller {
 
     @PostMapping("/user")
     public ResponseEntity<User> createUser(@RequestBody Userrequest userrequest) {
-        User user = new User();
-        user.setEmail(userrequest.getEmail());
-        user.setPassword(userrequest.getPassword());
+        List<User.Friend> friends = Collections.emptyList(); // or initialize with existing friends if needed
+        User user = new User(userrequest.getEmail(), userrequest.getPassword(), true, friends);
         return ResponseEntity.status(201).body(this.userrepositry.save(user));
     }
 
@@ -86,7 +105,7 @@ public class Usercontroller {
 
         
         // Map Userrequest to User entity
-        User user = new User(userRequest.getEmail(), userRequest.getPassword());
+        User user = new User(userRequest.getEmail(), userRequest.getPassword(), true, Collections.emptyList());
 
         // Save the user to MongoDB
         userrepositry.save(user);
@@ -95,7 +114,7 @@ public class Usercontroller {
     }
 
     @PostMapping("/login")
-     public ResponseEntity<String> login(@RequestBody Userrequest userRequest) {
+public ResponseEntity<String> login(@RequestBody Userrequest userRequest) {
     Optional<User> user = userrepositry.findByEmailAndPassword(userRequest.getEmail(), userRequest.getPassword());
 
     if (user.isPresent()) {
@@ -105,8 +124,11 @@ public class Usercontroller {
         // User not found or password incorrect, login failed
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
-    
 }
 
-
+    private String getCurrentUserEmail() {
+        // Implement logic to get the current user's email
+        return "lauda";
+    }
+    
 }

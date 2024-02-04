@@ -127,7 +127,6 @@ const Leftsec =(props)=>{
     const navigate = useNavigate();
 
 
-
     useEffect(() => {
       const fetchUserNames = async () => {
         try {
@@ -135,12 +134,14 @@ const Leftsec =(props)=>{
             const loggedInUserEmail = localStorage.getItem('email');
             const response = await fetch(`http://localhost:8080/api/users/usernames/${loggedInUserEmail}`);
             const data = await response.json();
-            setNameList(data);
 
+            console.log('API Response:', data); // Log the data
 
-            console.log(data); // Log the data here
-
-
+    
+            // Exclude the current user from the list
+            const filteredNames = data.filter(user => user.email !== loggedInUserEmail);
+    
+            setNameList(filteredNames);
           }
         } catch (error) {
           console.error('Error fetching user names:', error);
@@ -153,7 +154,6 @@ const Leftsec =(props)=>{
         setEmail(localStorage.getItem('email'));
       }
     }, [email]);
-
 
 
 
